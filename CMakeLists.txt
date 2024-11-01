@@ -80,6 +80,7 @@ if (WIN32)
     configure_file("${OpenVINO_DIR}/../bin/intel64/Debug/openvino_intel_cpu_plugind.dll"  "${CMAKE_BINARY_DIR}/Debug/openvino_intel_cpu_plugind.dll" COPYONLY)
     configure_file("${OpenVINO_DIR}/../bin/intel64/Debug/openvino_intel_gpu_plugind.dll"  "${CMAKE_BINARY_DIR}/Debug/openvino_intel_gpu_plugind.dll" COPYONLY)
     configure_file("${OpenVINO_DIR}/../bin/intel64/Debug/openvino_intel_npu_plugind.dll"  "${CMAKE_BINARY_DIR}/Debug/openvino_intel_npu_plugind.dll" COPYONLY)
+    configure_file("${OpenVINO_DIR}/../bin/intel64/Debug/openvino_ir_frontendd.dll"  "${CMAKE_BINARY_DIR}/Debug/openvino_ir_frontendd.dll" COPYONLY)
     configure_file("${OpenVINO_DIR}/../bin/intel64/Debug/openvinod.dll"  "${CMAKE_BINARY_DIR}/Debug/openvinod.dll" COPYONLY)
     ## TBB
     configure_file("${OpenVINO_DIR}/../3rdparty/tbb/bin/tbb12_debug.dll" "${CMAKE_BINARY_DIR}/Debug/tbb12_debug.dll" COPYONLY)
