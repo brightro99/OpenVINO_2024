@@ -1,0 +1,7 @@
+---
+Language:        Cpp
+BasedOnStyle:  Google
+IndentWidth: 4        # 들여쓰기 너비를 4로 설정
+TabWidth: 4           # 탭 너비를 4로 설정
+ColumnLimit: 0        # 행 길이 제한을 없앰 (0은 무제한을 의미)
+...

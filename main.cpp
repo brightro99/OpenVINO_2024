@@ -1,10 +1,11 @@
-#include <string>
 #include <fstream>
 #include <iostream>
+#include <string>
 
-#include "opencv2\\opencv.hpp"
-#include "openvino\\openvino.hpp"
-
+#include "opencv2/opencv.hpp"
+#include "openvino/core/preprocess/input_info.hpp"
+#include "openvino/core/preprocess/pre_post_process.hpp"
+#include "openvino/openvino.hpp"
 
 void printInputAndOutputsInfo(const ov::Model& network) {
     std::cout << "model name: " << network.get_friendly_name() << std::endl;
@@ -46,8 +47,8 @@ std::string readFileToString(const std::string& file_path) {
     }
 
     std::ostringstream buffer;
-    buffer << file.rdbuf();   //파일의 전체 내용을 스트림으로 읽어오기
-    return buffer.str();      //std::string으로 반환
+    buffer << file.rdbuf();  // 파일의 전체 내용을 스트림으로 읽어오기
+    return buffer.str();     // std::string으로 반환
 }
 
 std::vector<uint8_t> readFileToBinary(const std::string& file_path) {
@@ -70,9 +71,7 @@ std::vector<uint8_t> readFileToBinary(const std::string& file_path) {
     return buffer;
 }
 
-
-int main(int argc, char const* argv[])
-{
+int main(int argc, char const* argv[]) {
     std::cout << "Hello World" << std::endl;
     cv::Mat dog = cv::imread("C:\\Users\\brightro99\\Desktop\\Workspace\\OpenVINO_2024\\images\\dog.jpg");
 
@@ -81,20 +80,25 @@ int main(int argc, char const* argv[])
 
     ov::Core core;
 
-
-    try
-    {
+    try {
         std::string xml = readFileToString(xml_path);
         std::vector<uint8_t> weights = readFileToBinary(weights_path);
 
-        ov::Tensor weights_tensor = ov::Tensor(ov::element::u8, { 1, weights.size() }, weights.data());
+        ov::Tensor weights_tensor = ov::Tensor(ov::element::u8, {1, weights.size()}, weights.data());
         std::shared_ptr<ov::Model> model = core.read_model(xml, weights_tensor);
         printInputAndOutputsInfo(*model);
-    }
-    catch (const std::exception& e)
-    {
+
+        ov::preprocess::PrePostProcessor ppp(model);
+
+        ppp.input().tensor().set_layout("NCHW");
+        ppp.input().preprocess().convert_color(ov::preprocess::ColorFormat::BGR);
+        ppp.input().preprocess().mean({0, 0, 0});
+        ppp.input().preprocess().scale({255, 255, 255});
+        ppp.input().preprocess().
+
+    } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }
-    
+
     return 0;
 }
