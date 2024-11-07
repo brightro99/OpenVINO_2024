@@ -290,7 +290,7 @@ int main(int argc, char const* argv[]) {
         cv::Size2f model_input_shape_;  // Input shape of the model
         cv::Size model_output_shape_;   // Output shape of the model
 
-        float model_confidence_threshold_ = 0.7;  // Confidence threshold for detections
+        float model_confidence_threshold_ = 0.5;  // Confidence threshold for detections
         float model_NMS_threshold_ = 0.4;         // Non-Maximum Suppression threshold
 
         // Get input shape from the model
@@ -320,25 +320,28 @@ int main(int argc, char const* argv[]) {
         const float* detections = inference_request_.get_output_tensor().data<const float>();
         const cv::Mat detection_outputs(model_output_shape_, CV_32F, (float*)detections);  // Create OpenCV matrix from output tensor
 
-        for (int i = 0; i < detection_outputs.rows; i++) {
-            if (detection_outputs.at<float>(i, 4) < model_confidence_threshold_) {
+        std::cout << detection_outputs.cols << " " << detection_outputs.rows << " " << detection_outputs.channels() << std::endl; 
+
+        // 8400, 56, 1
+
+        for (int i = 0; i < detection_outputs.cols; ++i) {
+
+            float confidence = detection_outputs.at<float>(4, i);
+            if (confidence < model_confidence_threshold_) {
                 continue;
             }
+
             BaseObject object;
-            object.confidence = detection_outputs.at<float>(i, 4);
+            object.confidence = confidence;
 
             cv::Rect box(
-                static_cast<int>(detection_outputs.at<float>(i, 0) - detection_outputs.at<float>(i, 2) / 2),  // left
-                static_cast<int>(detection_outputs.at<float>(i, 1) - detection_outputs.at<float>(i, 3) / 2),  // top
-                static_cast<int>(detection_outputs.at<float>(i, 2)),                                          // width
-                static_cast<int>(detection_outputs.at<float>(i, 3))                                           // height
+                static_cast<int>(detection_outputs.at<float>(0, i) - detection_outputs.at<float>(2, i) / 2),  // left
+                static_cast<int>(detection_outputs.at<float>(1, i) - detection_outputs.at<float>(3, i) / 2),  // top
+                static_cast<int>(detection_outputs.at<float>(2, i)),                                          // width
+                static_cast<int>(detection_outputs.at<float>(3, i))                                           // height
             );
 
-            for (int j = 0; j < 17; j++) {
-                std::cout << std::to_string(j) << " " << std::to_string(detection_outputs.at<float>(i, j)) << std::endl;
-                std::cout << std::to_string(j) << " " << std::to_string(detection_outputs.at<float>(j, i)) << std::endl;
-            }
-
+            
             float x1 = static_cast<float>(box.x);
             float y1 = static_cast<float>(box.y);
             float x2 = static_cast<float>(box.x + box.width);
@@ -361,6 +364,11 @@ int main(int argc, char const* argv[]) {
 
             object.bbox = box;
 
+            //std::cout << object.confidence << std::endl;
+            //std::cout << object.bbox.x << std::endl;
+            //std::cout << object.bbox.y << std::endl;
+            //std::cout << object.bbox.width << std::endl;
+            //std::cout << object.bbox.height << std::endl;
             objects.push_back(object);
         }
 
