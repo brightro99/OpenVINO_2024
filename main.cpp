@@ -7,6 +7,10 @@
 #include "openvino/core/preprocess/pre_post_process.hpp"
 #include "openvino/openvino.hpp"
 
+template <typename T>
+static float calculateIoU(const T& obj1, const T& obj2);  // 선언
+template <typename T>
+static bool isOverlapped(const T& obj1, const T& obj2);  // 선언
 struct BaseObject {
     cv::Rect bbox;
     float confidence;
@@ -214,10 +218,10 @@ void letterbox(cv::Mat& input_image, cv::Mat& output_image, const cv::Size2f& ta
 
 int main(int argc, char const* argv[]) {
     std::cout << "Hello World" << std::endl;
-    cv::Mat frame = cv::imread("C:\\Users\\brightro99\\Desktop\\Workspace\\OpenVINO_2024\\images\\sonny.jpg");
+    cv::Mat frame = cv::imread("../images/sonny.jpg");
 
-    std::string weights_path = "C:\\Users\\brightro99\\Desktop\\Workspace\\OpenVINO_2024\\models\\pe-01.bin";
-    std::string xml_path = "C:\\Users\\brightro99\\Desktop\\Workspace\\OpenVINO_2024\\models\\pe-01.xml";
+    std::string weights_path = "../models/pe-01.bin";
+    std::string xml_path = "../models/pe-01.xml";
 
     ov::Core core;
 

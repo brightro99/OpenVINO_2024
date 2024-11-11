@@ -20,7 +20,16 @@ LIST(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/third_party)
 
 ### OPENVINO
 MESSAGE(STATUS ">>> [OpenVINO SETTING]")
-SET(OpenVINO_DIR "C:/Program Files (x86)/Intel/openvino_2024.4.0/runtime/cmake")
+
+IF(WIN32)      
+    SET(OpenVINO_DIR "C:/Program Files (x86)/Intel/openvino_2024.4.0/runtime/cmake")
+ELSEIF(APPLE)
+    SET(OpenVINO_DIR "/opt/intel/openvino_2024.4.0/runtime/cmake")
+ELSEIF(UNIX)
+    SET(OpenVINO_DIR "")
+ELSE()
+ENDIF()
+
 FIND_PACKAGE(OpenVINO REQUIRED Runtime Threading)
 IF(OpenVINO_FOUND)
     MESSAGE(STATUS "    Find OpenVINO ${OpenVINO_VERSION_MAJOR}.${OpenVINO_VERSION_MINOR}.${OpenVINO_VERSION_PATCH}")
@@ -41,7 +50,16 @@ ENDIF()
 
 ### OPENCV
 MESSAGE(STATUS ">>> [OpenCV SETTING]")
-SET(OpenCV_DIR "${OpenVINO_DIR}/../3rdparty/opencv-4.10.0")
+
+IF(WIN32)      
+    SET(OpenCV_DIR "${OpenVINO_DIR}/../3rdparty/opencv-4.10.0")
+ELSEIF(APPLE)
+    SET(OpenVINO_DIR "/opt/homebrew/lib/cmake/opencv4")
+ELSEIF(UNIX)
+    SET(OpenVINO_DIR "")
+ELSE()
+ENDIF()
+
 FIND_PACKAGE(OpenCV REQUIRED core imgproc imgcodecs highgui videoio)
 
 IF(OpenCV_FOUND)
